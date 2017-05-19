@@ -9,6 +9,7 @@
     bool _trackerStarted;
     bool _debugMode;
 	NSMutableDictionary *_customDimensions;
+    NSMutableDictionary *_customMetrics;
 }
 
 - (void) startTrackerWithId: (CDVInvokedUrlCommand*)command;

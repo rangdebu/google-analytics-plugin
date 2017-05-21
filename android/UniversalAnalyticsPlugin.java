@@ -41,6 +41,7 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
     public Boolean trackerStarted = false;
     public Boolean debugModeEnabled = false;
     public HashMap<Integer, String> customDimensions = new HashMap<Integer, String>();
+    public HashMap<Integer, Float> customMetrics = new HashMap<Integer, Float>();
 
     public Tracker tracker;
 
@@ -177,6 +178,7 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
         callbackContext.success("custom dimension started");
     }
 
+    /*
     private <T> void addCustomDimensionsToHitBuilder(T builder) {
         //unfortunately the base HitBuilders.HitBuilder class is not public, therefore have to use reflection to use
         //the common setCustomDimension (int index, String dimension) method
@@ -197,6 +199,7 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
         } catch (NoSuchMethodException e) {
         }
     }
+    */
 
     private void trackView(String screenname, String campaignUrl, boolean newSession, CallbackContext callbackContext) {
         if (! trackerStarted ) {
@@ -208,11 +211,19 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
             tracker.setScreenName(screenname);
 
             HitBuilders.ScreenViewBuilder hitBuilder = new HitBuilders.ScreenViewBuilder();
-            addCustomDimensionsToHitBuilder(hitBuilder);
 
             if(!campaignUrl.equals("")){
                 hitBuilder.setCampaignParamsFromUrl(campaignUrl);
             }
+
+            for (Integer dimenKey : this.customDimensions.keySet()) {
+                hitBuilder.setCustomDimension(dimenKey, this.customDimensions.get(dimenKey));
+            }
+            for (Integer metricKey : this.customMetrics.keySet()) {
+                hitBuilder.setCustomMetric(metricKey, this.customMetrics.get(metricKey));
+            }
+            this.customDimensions.clear();
+            this.customMetrics.clear();
             
             if(!newSession) {
                 tracker.send(hitBuilder.build());
@@ -234,7 +245,15 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
 
         if (null != category && category.length() > 0) {
             HitBuilders.EventBuilder hitBuilder = new HitBuilders.EventBuilder();
-            addCustomDimensionsToHitBuilder(hitBuilder);
+
+            for (Integer dimenKey : this.customDimensions.keySet()) {
+                hitBuilder.setCustomDimension(dimenKey, this.customDimensions.get(dimenKey));
+            }
+            for (Integer metricKey : this.customMetrics.keySet()) {
+                hitBuilder.setCustomMetric(metricKey, this.customMetrics.get(metricKey));
+            }
+            this.customDimensions.clear();
+            this.customMetrics.clear();
 
             if(!newSession){
                 tracker.send(hitBuilder
@@ -266,11 +285,7 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
         }
 
         if (key >= 0) {
-            HitBuilders.ScreenViewBuilder hitBuilder = new HitBuilders.ScreenViewBuilder();
-            tracker.send(hitBuilder
-                    .setCustomMetric(key, Float.parseFloat(value))
-                    .build()
-            );
+            this.customMetrics.put(key, Float.parseFloat(value));
             callbackContext.success("Track Metric: " + key + ", value: " + value);
         } else {
             callbackContext.error("Expected integer key: " + key + ", and string value: " + value);
@@ -285,7 +300,6 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
 
         if (null != description && description.length() > 0) {
             HitBuilders.ExceptionBuilder hitBuilder = new HitBuilders.ExceptionBuilder();
-            addCustomDimensionsToHitBuilder(hitBuilder);
 
             tracker.send(hitBuilder
                     .setDescription(description)
@@ -306,7 +320,6 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
 
         if (null != category && category.length() > 0) {
             HitBuilders.TimingBuilder hitBuilder = new HitBuilders.TimingBuilder();
-            addCustomDimensionsToHitBuilder(hitBuilder);
 
             tracker.send(hitBuilder
                     .setCategory(category)
@@ -329,7 +342,7 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
 
         if (null != id && id.length() > 0) {
             HitBuilders.TransactionBuilder hitBuilder = new HitBuilders.TransactionBuilder();
-            addCustomDimensionsToHitBuilder(hitBuilder);
+//            addCustomDimensionsToHitBuilder(hitBuilder);
 
             tracker.send(hitBuilder
                     .setTransactionId(id)
@@ -353,7 +366,7 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
 
         if (null != id && id.length() > 0) {
             HitBuilders.ItemBuilder hitBuilder = new HitBuilders.ItemBuilder();
-            addCustomDimensionsToHitBuilder(hitBuilder);
+//            addCustomDimensionsToHitBuilder(hitBuilder);
 
             tracker.send(hitBuilder
                     .setTransactionId(id)

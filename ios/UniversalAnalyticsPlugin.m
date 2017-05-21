@@ -48,6 +48,9 @@
     
     id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
     tracker.allowIDFACollection = [[command argumentAtIndex:0 withDefault:@(NO)] boolValue];
+    
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (NSDictionary *) customVariables {
@@ -106,84 +109,84 @@
 
 - (void) dispatch: (CDVInvokedUrlCommand*) command
 {
-  [[GAI sharedInstance] dispatch];
+    [[GAI sharedInstance] dispatch];
 }
 
 - (void) debugMode: (CDVInvokedUrlCommand*) command
 {
-  _debugMode = true;
-  [[GAI sharedInstance].logger setLogLevel:kGAILogLevelVerbose];
+    _debugMode = true;
+    [[GAI sharedInstance].logger setLogLevel:kGAILogLevelVerbose];
 }
 
 - (void) setUserId: (CDVInvokedUrlCommand*)command
 {
-  CDVPluginResult* pluginResult = nil;
-  NSString* userId = [command.arguments objectAtIndex:0];
+    CDVPluginResult* pluginResult = nil;
+    NSString* userId = [command.arguments objectAtIndex:0];
 
-  if ( ! _trackerStarted) {
+    if ( ! _trackerStarted) {
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Tracker not started"];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     return;
-  }
+    }
 
-  id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
-  [tracker set:@"&uid" value: userId];
+    id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
+    [tracker set:@"&uid" value: userId];
 
-  pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-  [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void) setAnonymizeIp: (CDVInvokedUrlCommand*)command
 {
-  CDVPluginResult* pluginResult = nil;
-  NSString* anonymize = [command.arguments objectAtIndex:0];
+    CDVPluginResult* pluginResult = nil;
+    NSString* anonymize = [command.arguments objectAtIndex:0];
 
-  if ( ! _trackerStarted) {
+    if ( ! _trackerStarted) {
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Tracker not started"];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     return;
-  }
+    }
 
-  id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
-  [tracker set:kGAIAnonymizeIp value:anonymize];
+    id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
+    [tracker set:kGAIAnonymizeIp value:anonymize];
 
-  pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-  [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void) setOptOut: (CDVInvokedUrlCommand*)command
 {
-  CDVPluginResult* pluginResult = nil;
-  bool optout = [[command.arguments objectAtIndex:0] boolValue];
+    CDVPluginResult* pluginResult = nil;
+    bool optout = [[command.arguments objectAtIndex:0] boolValue];
 
-  if ( ! _trackerStarted) {
+    if ( ! _trackerStarted) {
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Tracker not started"];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     return;
-  }
+    }
 
-  [[GAI sharedInstance] setOptOut:optout];
+    [[GAI sharedInstance] setOptOut:optout];
 
-  pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-  [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void) setAppVersion: (CDVInvokedUrlCommand*)command
 {
-  CDVPluginResult* pluginResult = nil;
-  NSString* version = [command.arguments objectAtIndex:0];
+    CDVPluginResult* pluginResult = nil;
+    NSString* version = [command.arguments objectAtIndex:0];
 
-  if ( ! _trackerStarted) {
+    if ( ! _trackerStarted) {
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Tracker not started"];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     return;
-  }
+    }
 
-  id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
-  [tracker set:@"&av" value: version];
+    id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
+    [tracker set:@"&av" value: version];
 
-  pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-  [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void) enableUncaughtExceptionReporting: (CDVInvokedUrlCommand*)command
@@ -265,45 +268,40 @@
       return;
     }
 
-//    [self.commandDelegate runInBackground:^{
-//        CDVPluginResult* pluginResult = nil;
-        NSString *category = nil;
-        NSString *action = nil;
-        NSString *label = nil;
-        NSNumber *value = nil;
+    NSString *category = nil;
+    NSString *action = nil;
+    NSString *label = nil;
+    NSNumber *value = nil;
 
-        if ([command.arguments count] > 0)
-            category = [command.arguments objectAtIndex:0];
+    if ([command.arguments count] > 0)
+        category = [command.arguments objectAtIndex:0];
 
-        if ([command.arguments count] > 1)
-            action = [command.arguments objectAtIndex:1];
+    if ([command.arguments count] > 1)
+        action = [command.arguments objectAtIndex:1];
 
-        if ([command.arguments count] > 2)
-            label = [command.arguments objectAtIndex:2];
+    if ([command.arguments count] > 2)
+        label = [command.arguments objectAtIndex:2];
 
-        if ([command.arguments count] > 3)
-            value = [command.arguments objectAtIndex:3];
+    if ([command.arguments count] > 3)
+        value = [command.arguments objectAtIndex:3];
 
-        bool newSession = [[command argumentAtIndex:4 withDefault:@(NO)] boolValue];           
+    bool newSession = [[command argumentAtIndex:4 withDefault:@(NO)] boolValue];           
 
-        id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
+    id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
 
-        GAIDictionaryBuilder *builder = [GAIDictionaryBuilder
-                        createEventWithCategory: category //required
-                        action: action //required
-                        label: label
-                        value: value];
-        if(newSession){ 
-            [builder set:@"start" forKey:kGAISessionControl];
-        }
-        
-        [tracker send:[[builder setAll:[self customVariables]] build]];
+    GAIDictionaryBuilder *builder = [GAIDictionaryBuilder
+                    createEventWithCategory: category //required
+                    action: action //required
+                    label: label
+                    value: value];
+    if(newSession){ 
+        [builder set:@"start" forKey:kGAISessionControl];
+    }
 
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    [tracker send:[[builder setAll:[self customVariables]] build]];
 
-//    }];
-
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void) trackException: (CDVInvokedUrlCommand*)command
@@ -350,34 +348,31 @@
       return;
     }
 
-//    [self.commandDelegate runInBackground:^{
-//        CDVPluginResult* pluginResult = nil;
-        NSString* screenName = [command.arguments objectAtIndex:0];
+    NSString* screenName = [command.arguments objectAtIndex:0];
 
-        id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
+    id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
 
-        NSString* deepLinkUrl = [command.arguments objectAtIndex:1];
-        GAIDictionaryBuilder* openParams = [[GAIDictionaryBuilder alloc] init];
-    
-        if (deepLinkUrl && deepLinkUrl != (NSString *)[NSNull null]) {
-            [[openParams setCampaignParametersFromUrl:deepLinkUrl] build];
-        }
+    NSString* deepLinkUrl = [command.arguments objectAtIndex:1];
+    GAIDictionaryBuilder* openParams = [[GAIDictionaryBuilder alloc] init];
 
-        bool newSession = [[command argumentAtIndex:2 withDefault:@(NO)] boolValue];
-        if(newSession){            
-            [openParams set:@"start" forKey:kGAISessionControl];
-        }        
+    if (deepLinkUrl && deepLinkUrl != (NSString *)[NSNull null]) {
+        [[openParams setCampaignParametersFromUrl:deepLinkUrl] build];
+    }
 
-        NSMutableDictionary *hitParamsDict = [openParams build];
-        
-        [hitParamsDict addEntriesFromDictionary:[self customVariables]];
+    bool newSession = [[command argumentAtIndex:2 withDefault:@(NO)] boolValue];
+    if(newSession){            
+        [openParams set:@"start" forKey:kGAISessionControl];
+    }        
 
-        [tracker set:kGAIScreenName value:screenName];   
-        [tracker send:[[[GAIDictionaryBuilder createScreenView] setAll:hitParamsDict] build]];
+    NSMutableDictionary *hitParamsDict = [openParams build];
 
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-//    }];
+    [hitParamsDict addEntriesFromDictionary:[self customVariables]];
+
+    [tracker set:kGAIScreenName value:screenName];   
+    [tracker send:[[[GAIDictionaryBuilder createScreenView] setAll:hitParamsDict] build]];
+
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void) trackTiming: (CDVInvokedUrlCommand*)command
@@ -433,38 +428,35 @@
       return;
     }
 
-//    [self.commandDelegate runInBackground:^{
-//      CDVPluginResult* pluginResult = nil;
-
-      NSString *transactionId = nil;
-      NSString *affiliation = nil;
-      NSNumber *revenue = nil;
-      NSNumber *tax = nil;
-      NSNumber *shipping = nil;
-      NSString *currencyCode = nil;
+    NSString *transactionId = nil;
+    NSString *affiliation = nil;
+    NSNumber *revenue = nil;
+    NSNumber *tax = nil;
+    NSNumber *shipping = nil;
+    NSString *currencyCode = nil;
 
 
-      if ([command.arguments count] > 0)
-          transactionId = [command.arguments objectAtIndex:0];
+    if ([command.arguments count] > 0)
+      transactionId = [command.arguments objectAtIndex:0];
 
-      if ([command.arguments count] > 1)
-          affiliation = [command.arguments objectAtIndex:1];
+    if ([command.arguments count] > 1)
+      affiliation = [command.arguments objectAtIndex:1];
 
-      if ([command.arguments count] > 2)
-          revenue = [command.arguments objectAtIndex:2];
+    if ([command.arguments count] > 2)
+      revenue = [command.arguments objectAtIndex:2];
 
-      if ([command.arguments count] > 3)
-          tax = [command.arguments objectAtIndex:3];
+    if ([command.arguments count] > 3)
+      tax = [command.arguments objectAtIndex:3];
 
-      if ([command.arguments count] > 4)
-          shipping = [command.arguments objectAtIndex:4];
+    if ([command.arguments count] > 4)
+      shipping = [command.arguments objectAtIndex:4];
 
-      if ([command.arguments count] > 5)
-          currencyCode = [command.arguments objectAtIndex:5];
+    if ([command.arguments count] > 5)
+      currencyCode = [command.arguments objectAtIndex:5];
 
-      id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
+    id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
 
-      [tracker send:[[GAIDictionaryBuilder createTransactionWithId:transactionId             // (NSString) Transaction ID
+    [tracker send:[[GAIDictionaryBuilder createTransactionWithId:transactionId             // (NSString) Transaction ID
                                                        affiliation:affiliation         // (NSString) Affiliation
                                                            revenue:revenue                  // (NSNumber) Order revenue (including tax and shipping)
                                                                tax:tax                  // (NSNumber) Tax
@@ -472,9 +464,8 @@
                                                       currencyCode:currencyCode] build]];        // (NSString) Currency code
 
 
-      pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-      [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-//    }];
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 
@@ -489,54 +480,50 @@
       return;
     }
 
-//    [self.commandDelegate runInBackground:^{
-
-//      CDVPluginResult* pluginResult = nil;
-      NSString *transactionId = nil;
-      NSString *name = nil;
-      NSString *sku = nil;
-      NSString *category = nil;
-      NSNumber *price = nil;
-      NSNumber *quantity = nil;
-      NSString *currencyCode = nil;
+    NSString *transactionId = nil;
+    NSString *name = nil;
+    NSString *sku = nil;
+    NSString *category = nil;
+    NSNumber *price = nil;
+    NSNumber *quantity = nil;
+    NSString *currencyCode = nil;
 
 
-      if ([command.arguments count] > 0)
-          transactionId = [command.arguments objectAtIndex:0];
+    if ([command.arguments count] > 0)
+      transactionId = [command.arguments objectAtIndex:0];
 
-      if ([command.arguments count] > 1)
-          name = [command.arguments objectAtIndex:1];
+    if ([command.arguments count] > 1)
+      name = [command.arguments objectAtIndex:1];
 
-      if ([command.arguments count] > 2)
-          sku = [command.arguments objectAtIndex:2];
+    if ([command.arguments count] > 2)
+      sku = [command.arguments objectAtIndex:2];
 
-      if ([command.arguments count] > 3)
-          category = [command.arguments objectAtIndex:3];
+    if ([command.arguments count] > 3)
+      category = [command.arguments objectAtIndex:3];
 
-      if ([command.arguments count] > 4)
-          price = [command.arguments objectAtIndex:4];
+    if ([command.arguments count] > 4)
+      price = [command.arguments objectAtIndex:4];
 
-      if ([command.arguments count] > 5)
-          quantity = [command.arguments objectAtIndex:5];
+    if ([command.arguments count] > 5)
+      quantity = [command.arguments objectAtIndex:5];
 
-      if ([command.arguments count] > 6)
-          currencyCode = [command.arguments objectAtIndex:6];
+    if ([command.arguments count] > 6)
+      currencyCode = [command.arguments objectAtIndex:6];
 
-      id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
-
-
-      [tracker send:[[GAIDictionaryBuilder createItemWithTransactionId:transactionId         // (NSString) Transaction ID
-                                                                  name:name  // (NSString) Product Name
-                                                                   sku:sku           // (NSString) Product SKU
-                                                              category:category  // (NSString) Product category
-                                                                 price:price               // (NSNumber)  Product price
-                                                              quantity:quantity                 // (NSNumber)  Product quantity
-                                                          currencyCode:currencyCode] build]];    // (NSString) Currency code
+    id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
 
 
-      pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-      [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-//    }];
+    [tracker send:[[GAIDictionaryBuilder createItemWithTransactionId:transactionId         // (NSString) Transaction ID
+                                                              name:name  // (NSString) Product Name
+                                                               sku:sku           // (NSString) Product SKU
+                                                          category:category  // (NSString) Product category
+                                                             price:price               // (NSNumber)  Product price
+                                                          quantity:quantity                 // (NSNumber)  Product quantity
+                                                      currencyCode:currencyCode] build]];    // (NSString) Currency code
+
+
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 @end
